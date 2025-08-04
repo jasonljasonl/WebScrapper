@@ -1,12 +1,8 @@
 import os
-import re
 
 import pytest
 from playwright.async_api import async_playwright
-from playwright.sync_api import Page, expect, sync_playwright
 import asyncio
-
-from pytest_playwright.pytest_playwright import playwright
 
 AUTH_PATH = os.path.abspath("../playwright/.auth/auth.json")
 
@@ -27,15 +23,19 @@ async def test_get_product_rate():
     print(page.title())
 
     await page.locator("a[data-hook='see-all-reviews-link-foot']").first.click()
-    print(page.title())
+
+    await page.locator("a[href*='filterByStar=one_star']").click()
+
+    await page.wait_for_load_state("load")
+
 
     comments = await page.locator("li[data-hook='review']").all()
+    print(len(comments))
 
-    for comment in comments:
-        print(await comment.text_content())
+    for i, comment in enumerate(comments):
+        comment_text = await comment.locator("span[data-hook='review-body']").inner_text()
+        print(f"\nComments #{i+1}:\n{comment_text}")
 
-    await browser.close()
-    await playwright.stop()
 
 if __name__ == "__main__":
     asyncio.run(test_get_product_rate())
