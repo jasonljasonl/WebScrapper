@@ -1,5 +1,4 @@
 import os
-
 import pytest
 from playwright.async_api import async_playwright
 import asyncio
@@ -26,7 +25,6 @@ async def test_get_product_rate():
     await page.wait_for_selector("a[href*='filterByStar=one_star']")
     await page.locator("a[href*='filterByStar=one_star']").click()
 
-
     await page.locator('li.a-last').click()
 
     await page.wait_for_load_state("load")
@@ -48,8 +46,6 @@ async def test_get_product_rate():
             comment_text = await comment.locator("span[data-hook='review-body']").inner_text()
             print(f"\nComments #{i+1}:\n{comment_text}")
         await next_button_li.click()
-
-
 
 
 if __name__ == "__main__":
