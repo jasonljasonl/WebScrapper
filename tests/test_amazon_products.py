@@ -17,13 +17,13 @@ async def test_get_product_rate():
     auth_path = os.path.abspath("../playwright/.auth/auth.json")
     playwright, browser, context, page = await open_logged_in(auth_path)
 
-    await page.goto('https://www.amazon.fr/dp/B0BSV9SG7B/ref=sspa_dk_detail_3?pd_rd_i=B0BSV9SG7B&pd_rd_w=UEtYH&content-id=amzn1.sym.d28e3d6a-4412-4be7-a4f8-1c4a85ce86d9&pf_rd_p=d28e3d6a-4412-4be7-a4f8-1c4a85ce86d9&pf_rd_r=WXZV2AC40WY78SCS7DXA&pd_rd_wg=4HOaI&pd_rd_r=557db566-dbe9-43e1-8ca0-24421e832a82&sp_csd=d2lkZ2V0TmFtZT1zcF9kZXRhaWw&th=1')
+    await page.goto('https://www.amazon.fr/-/en/Moulinex-Click-Chef-HF452110-Processor/dp/B089QQM45F/ref=cm_cr_arp_d_bdcrb_top?ie=UTF8')
 
     await page.locator("a[data-hook='see-all-reviews-link-foot']").first.click()
 
     await page.wait_for_selector("a[href*='filterByStar=one_star']")
     await page.locator("a[href*='filterByStar=one_star']").click()
-
+    await asyncio.sleep(2)
 
     await page.wait_for_load_state("load")
 
@@ -46,8 +46,8 @@ async def test_get_product_rate():
         if li_class and 'a-disabled' in li_class:
             break
 
-
-        await next_button.click()
+        if next_button.count != 0:
+            await next_button.click()
         await page.wait_for_load_state("load")
 
 
