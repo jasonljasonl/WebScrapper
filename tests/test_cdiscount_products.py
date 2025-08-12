@@ -3,7 +3,6 @@ import pytest
 from playwright.async_api import async_playwright
 import asyncio
 
-
 @pytest.mark.asyncio
 async def test_get_product_rate():
     playwright = await async_playwright().start()
@@ -24,13 +23,11 @@ async def test_get_product_rate():
 
         next_button = page.locator("input[value='Suivant']").first
 
-
         print(len(comments))
 
         for i,comment in enumerate(comments):
             comment_text = await comment.locator("p").inner_text()
             print(f"\nComments #{i+1}:\n{comment_text}")
-
 
         button_disabled = await next_button.get_attribute("disabled")
 

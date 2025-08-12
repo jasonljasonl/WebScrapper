@@ -5,7 +5,6 @@ import asyncio
 
 AUTH_PATH = os.path.abspath("../playwright/.auth/auth.json")
 
-
 async def open_logged_in(auth_path):
     playwright = await async_playwright().start()
     browser = await playwright.chromium.launch(headless=False)
@@ -18,14 +17,13 @@ async def test_get_product_rate():
     auth_path = os.path.abspath("../playwright/.auth/auth.json")
     playwright, browser, context, page = await open_logged_in(auth_path)
 
-    await page.goto('https://www.amazon.fr/Lepro-Dimmable-Puissant-R%C3%A9glable-Anti-%C3%89blouissement/dp/B095R8KFN3/?_encoding=UTF8&pd_rd_w=kBpcM&content-id=amzn1.sym.678de850-ec61-45a5-ac60-3d5045978e5b%3Aamzn1.symc.9b8fba90-e74e-4690-b98f-edc36fe735a6&pf_rd_p=678de850-ec61-45a5-ac60-3d5045978e5b&pf_rd_r=Q4JK90TKZKXNNQC37GC7&pd_rd_wg=klq0l&pd_rd_r=889d0cf8-3f95-41a8-bea1-a26a5e7bdbbe&ref_=pd_hp_d_btf_ci_mcx_mr_ca_id_hp_d&th=1')
+    await page.goto('https://www.amazon.fr/dp/B0BSV9SG7B/ref=sspa_dk_detail_3?pd_rd_i=B0BSV9SG7B&pd_rd_w=UEtYH&content-id=amzn1.sym.d28e3d6a-4412-4be7-a4f8-1c4a85ce86d9&pf_rd_p=d28e3d6a-4412-4be7-a4f8-1c4a85ce86d9&pf_rd_r=WXZV2AC40WY78SCS7DXA&pd_rd_wg=4HOaI&pd_rd_r=557db566-dbe9-43e1-8ca0-24421e832a82&sp_csd=d2lkZ2V0TmFtZT1zcF9kZXRhaWw&th=1')
 
     await page.locator("a[data-hook='see-all-reviews-link-foot']").first.click()
 
     await page.wait_for_selector("a[href*='filterByStar=one_star']")
     await page.locator("a[href*='filterByStar=one_star']").click()
 
-    await page.locator('li.a-last').click()
 
     await page.wait_for_load_state("load")
 
@@ -33,19 +31,24 @@ async def test_get_product_rate():
         await page.wait_for_selector("li[data-hook='review']")
 
         comments = await page.locator("li[data-hook='review']").all()
-
-        next_button_li = page.locator('li.a-last')
-        li_class = await next_button_li.get_attribute('class')
-
-        if li_class and 'a-disabled' in li_class:
-            break
-
         print(len(comments))
 
         for i, comment in enumerate(comments):
             comment_text = await comment.locator("span[data-hook='review-body']").inner_text()
-            print(f"\nComments #{i+1}:\n{comment_text}")
-        await next_button_li.click()
+            print(f"\nComments #{i + 1}:\n{comment_text}")
+
+        next_button = page.locator('li.a-last')
+
+        if await next_button.count() == 0:
+            break
+
+        li_class = await next_button.get_attribute('class')
+        if li_class and 'a-disabled' in li_class:
+            break
+
+
+        await next_button.click()
+        await page.wait_for_load_state("load")
 
 
 if __name__ == "__main__":
