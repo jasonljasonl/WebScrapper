@@ -37,4 +37,3 @@ async def test_get_product_rate():
             await next_button.click()
 
     return playwright, browser, context, page
-
